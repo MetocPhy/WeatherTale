@@ -1,0 +1,365 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: white;
+    font-family: "Courier New", monospace;
+}
+
+.game-screen {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+}
+
+
+/* HEADER */
+
+header {
+    text-align: center;
+    border: 4px solid white;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    color: #ffff00;
+    font-size: 42px;
+}
+
+header p {
+    margin-bottom: 0;
+    font-size: 16px;
+}
+
+
+/* ARAMA */
+
+.search-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#cityInput {
+    flex: 1;
+    padding: 15px;
+    background: black;
+    border: 3px solid white;
+    color: white;
+    font-family: inherit;
+    font-size: 18px;
+    outline: none;
+}
+
+#cityInput:focus {
+    border-color: #ffff00;
+}
+
+#searchButton {
+    padding: 15px 25px;
+    background: black;
+    color: white;
+    border: 3px solid white;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background: white;
+    color: black;
+}
+
+
+/* ŞEHİRLER */
+
+.quick-cities {
+    border: 3px solid white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.quick-cities h2 {
+    margin-top: 0;
+    color: #ffff00;
+}
+
+.city-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.city-button {
+    background: black;
+    color: white;
+    border: 2px solid white;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.city-button:hover {
+    background: #ffff00;
+    color: black;
+}
+
+
+/* STATUS */
+
+#status {
+    border-left: 4px solid #ffff00;
+    padding: 12px;
+    margin-bottom: 20px;
+    color: #ffff00;
+}
+
+
+/* HAVA DURUMU */
+
+#weather {
+    border: 4px solid white;
+    padding: 25px;
+}
+
+.weather-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weather-top h2 {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.weather-top p {
+    margin-top: 0;
+    color: #aaa;
+}
+
+.weather-icon {
+    font-size: 70px;
+}
+
+.temperature {
+    font-size: 80px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #ffff00;
+}
+
+.description {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.rpg-message {
+    border: 2px solid white;
+    padding: 15px;
+    margin-bottom: 25px;
+    color: #ffff00;
+}
+
+
+/* DETAY KARTLARI */
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.detail-card {
+    border: 2px solid white;
+    padding: 18px;
+    text-align: center;
+}
+
+.detail-card span {
+    display: block;
+    color: #aaa;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.detail-card strong {
+    font-size: 18px;
+}
+
+
+/* TAHMİN */
+
+.forecast-section {
+    margin-top: 30px;
+}
+
+.forecast-section h2 {
+    color: #ffff00;
+    border-bottom: 2px solid white;
+    padding-bottom: 10px;
+}
+
+
+/* SAATLİK */
+
+.hourly-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0 20px;
+}
+
+.hour-card {
+    min-width: 120px;
+    border: 2px solid white;
+    padding: 15px;
+    text-align: center;
+}
+
+.hour-card .time {
+    color: #ffff00;
+    margin-bottom: 10px;
+}
+
+.hour-card .icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.hour-card .temp {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.hour-card .rain {
+    color: #aaa;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+
+/* GÜNLÜK */
+
+.daily-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.day-card {
+    display: grid;
+    grid-template-columns: 1.5fr 70px 1fr 1fr;
+    align-items: center;
+    border: 2px solid white;
+    padding: 15px;
+}
+
+.day-name {
+    color: #ffff00;
+    font-weight: bold;
+}
+
+.day-icon {
+    font-size: 30px;
+}
+
+.day-temp {
+    font-size: 18px;
+}
+
+.day-rain {
+    color: #aaa;
+}
+
+
+/* GÜNEŞ */
+
+.sun-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.sun-section div {
+    border: 2px solid white;
+    padding: 20px;
+    text-align: center;
+}
+
+.sun-section span {
+    display: block;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.sun-section strong {
+    font-size: 22px;
+    color: #ffff00;
+}
+
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    margin: 30px 0;
+    color: #aaa;
+    line-height: 1.8;
+}
+
+
+/* MOBİL */
+
+@media (max-width: 700px) {
+
+    .game-screen {
+        width: 94%;
+        margin: 15px auto;
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+
+    .search-area {
+        flex-direction: column;
+    }
+
+    #searchButton {
+        width: 100%;
+    }
+
+    .details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .temperature {
+        font-size: 60px;
+    }
+
+    .weather-icon {
+        font-size: 50px;
+    }
+
+    .day-card {
+        grid-template-columns: 1fr 50px 1fr;
+        gap: 10px;
+    }
+
+    .day-rain {
+        grid-column: 1 / -1;
+    }
+
+    .sun-section {
+        grid-template-columns: 1fr;
+    }
+}

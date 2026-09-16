@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WEATHERTALE</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="game-screen">
+
+        <header>
+            <h1>♥ WEATHERTALE</h1>
+            <p>HAVA DURUMU MACERASI</p>
+        </header>
+
+        <!-- ŞEHİR ARAMA -->
+        <section class="search-area">
+
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Şehir adı yaz..."
+            >
+
+            <button id="searchButton">
+                ARA
+            </button>
+
+        </section>
+
+        <!-- HIZLI ŞEHİRLER -->
+        <section class="quick-cities">
+
+            <h2>ŞEHİR SEÇ</h2>
+
+            <div class="city-buttons">
+
+                <button class="city-button" data-city="Aydın">
+                    AYDIN
+                </button>
+
+                <button class="city-button" data-city="Erzurum">
+                    ERZURUM
+                </button>
+
+                <button class="city-button" data-city="İstanbul">
+                    İSTANBUL
+                </button>
+
+                <button class="city-button" data-city="Ankara">
+                    ANKARA
+                </button>
+
+                <button class="city-button" data-city="İzmir">
+                    İZMİR
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- DURUM -->
+        <div id="status">
+            * Bir şehir seçin...
+        </div>
+
+
+        <!-- HAVA DURUMU -->
+        <main id="weather">
+
+            <div class="weather-top">
+
+                <div>
+                    <h2 id="cityName">AYDIN</h2>
+                    <p id="countryName">Türkiye</p>
+                </div>
+
+                <div class="weather-icon" id="weatherIcon">
+                    ☀️
+                </div>
+
+            </div>
+
+
+            <div class="temperature">
+                <span id="temperature">--</span>°C
+            </div>
+
+            <div class="description" id="description">
+                Hava durumu yükleniyor...
+            </div>
+
+            <div class="rpg-message" id="rpgMessage">
+                * Henüz bir şehir seçmedin.
+            </div>
+
+
+            <!-- DETAYLAR -->
+
+            <section class="details">
+
+                <div class="detail-card">
+                    <span>HİSSEDİLEN</span>
+                    <strong id="feelsLike">--°C</strong>
+                </div>
+
+                <div class="detail-card">
+                    <span>NEM</span>
+                    <strong id="humidity">--%</strong>
+                </div>
+
+                <div class="detail-card">
+                    <span>RÜZGAR</span>
+                    <strong id="wind">-- km/h</strong>
+                </div>
+
+                <div class="detail-card">
+                    <span>YAĞIŞ</span>
+                    <strong id="rainChance">--%</strong>
+                </div>
+
+            </section>
+
+
+            <!-- SAATLİK -->
+
+            <section class="forecast-section">
+
+                <h2>♥ SAATLİK HAVA DURUMU</h2>
+
+                <div
+                    id="hourlyForecast"
+                    class="hourly-container">
+                </div>
+
+            </section>
+
+
+            <!-- 7 GÜNLÜK -->
+
+            <section class="forecast-section">
+
+                <h2>♥ 7 GÜNLÜK TAHMİN</h2>
+
+                <div
+                    id="dailyForecast"
+                    class="daily-container">
+                </div>
+
+            </section>
+
+
+            <!-- GÜNEŞ -->
+
+            <section class="sun-section">
+
+                <div>
+                    <span>☀ GÜN DOĞUMU</span>
+                    <strong id="sunrise">--:--</strong>
+                </div>
+
+                <div>
+                    <span>☾ GÜN BATIMI</span>
+                    <strong id="sunset">--:--</strong>
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <footer>
+            WEATHERTALE © 2026
+            <br>
+            <small>Gerçek hava verileri ile çalışır</small>
+        </footer>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
