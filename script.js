@@ -578,3 +578,45 @@ cityButtons.forEach(
 // ========================================
 
 searchCity("Aydın");
+// ========================================
+// UNDERTALE EASTER EGG TEMALARI
+// ========================================
+
+const undertaleThemes = {
+    sans: "theme-sans",
+    papyrus: "theme-papyrus",
+    undyne: "theme-undyne",
+    toriel: "theme-toriel",
+    asgore: "theme-asgore",
+    alphys: "theme-alphys",
+    mettaton: "theme-mettaton",
+    flowey: "theme-flowey",
+    gaster: "theme-gaster"
+};
+
+function updateUndertaleTheme() {
+
+    const text =
+        cityInput.value
+            .trim()
+            .toLowerCase();
+
+    Object.values(undertaleThemes).forEach(
+        function(theme) {
+            document.body.classList.remove(theme);
+        }
+    );
+
+    if (undertaleThemes[text]) {
+
+        document.body.classList.add(
+            undertaleThemes[text]
+        );
+
+    }
+}
+
+cityInput.addEventListener(
+    "input",
+    updateUndertaleTheme
+);
