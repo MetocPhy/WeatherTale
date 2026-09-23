@@ -579,44 +579,63 @@ cityButtons.forEach(
 
 searchCity("Aydın");
 // ========================================
-// UNDERTALE EASTER EGG TEMALARI
+// UNDERTALE TEMA EASTER EGG
 // ========================================
 
-const undertaleThemes = {
-    sans: "theme-sans",
-    papyrus: "theme-papyrus",
-    undyne: "theme-undyne",
-    toriel: "theme-toriel",
-    asgore: "theme-asgore",
-    alphys: "theme-alphys",
-    mettaton: "theme-mettaton",
-    flowey: "theme-flowey",
-    gaster: "theme-gaster"
-};
+cityInput.addEventListener("input", function () {
 
-function updateUndertaleTheme() {
+    const character = cityInput.value
+        .trim()
+        .toLowerCase();
 
-    const text =
-        cityInput.value
-            .trim()
-            .toLowerCase();
-
-    Object.values(undertaleThemes).forEach(
-        function(theme) {
-            document.body.classList.remove(theme);
-        }
+    // Önce bütün temaları temizle
+    document.body.classList.remove(
+        "theme-sans",
+        "theme-papyrus",
+        "theme-undyne",
+        "theme-toriel",
+        "theme-asgore",
+        "theme-alphys",
+        "theme-mettaton",
+        "theme-flowey",
+        "theme-gaster"
     );
 
-    if (undertaleThemes[text]) {
-
-        document.body.classList.add(
-            undertaleThemes[text]
-        );
-
+    // Yeni temayı seç
+    if (character === "sans") {
+        document.body.classList.add("theme-sans");
     }
-}
 
-cityInput.addEventListener(
-    "input",
-    updateUndertaleTheme
-);
+    else if (character === "papyrus") {
+        document.body.classList.add("theme-papyrus");
+    }
+
+    else if (character === "undyne") {
+        document.body.classList.add("theme-undyne");
+    }
+
+    else if (character === "toriel") {
+        document.body.classList.add("theme-toriel");
+    }
+
+    else if (character === "asgore") {
+        document.body.classList.add("theme-asgore");
+    }
+
+    else if (character === "alphys") {
+        document.body.classList.add("theme-alphys");
+    }
+
+    else if (character === "mettaton") {
+        document.body.classList.add("theme-mettaton");
+    }
+
+    else if (character === "flowey") {
+        document.body.classList.add("theme-flowey");
+    }
+
+    else if (character === "gaster") {
+        document.body.classList.add("theme-gaster");
+    }
+
+});
