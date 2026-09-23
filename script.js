@@ -1,278 +1,155 @@
-/* =========================================
-   WEATHERTALE V2
-   GLOBAL WEATHER SYSTEM
-   ========================================= */
+// ========================================
+// WEATHERTALE
+// GERÇEK HAVA DURUMU SİSTEMİ
+// ========================================
 
 
-/* =========================================
-   ELEMENTLER
-   ========================================= */
+// HTML ELEMENTLERİ
 
-const cityInput =
-    document.getElementById("cityInput");
+const cityInput = document.getElementById("cityInput");
+const searchButton = document.getElementById("searchButton");
 
-const searchButton =
-    document.getElementById("searchButton");
+const statusBox = document.getElementById("status");
 
-const statusBox =
-    document.getElementById("status");
+const cityName = document.getElementById("cityName");
+const countryName = document.getElementById("countryName");
 
-const cityName =
-    document.getElementById("cityName");
+const temperature = document.getElementById("temperature");
+const weatherIcon = document.getElementById("weatherIcon");
+const description = document.getElementById("description");
+const rpgMessage = document.getElementById("rpgMessage");
 
-const countryName =
-    document.getElementById("countryName");
+const feelsLike = document.getElementById("feelsLike");
+const humidity = document.getElementById("humidity");
+const wind = document.getElementById("wind");
+const rainChance = document.getElementById("rainChance");
 
-const localTime =
-    document.getElementById("localTime");
+const hourlyForecast = document.getElementById("hourlyForecast");
+const dailyForecast = document.getElementById("dailyForecast");
 
-const temperature =
-    document.getElementById("temperature");
-
-const weatherIcon =
-    document.getElementById("weatherIcon");
-
-const description =
-    document.getElementById("description");
-
-const rpgMessage =
-    document.getElementById("rpgMessage");
-
-const maxTemp =
-    document.getElementById("maxTemp");
-
-const minTemp =
-    document.getElementById("minTemp");
-
-const feelsLike =
-    document.getElementById("feelsLike");
-
-const humidity =
-    document.getElementById("humidity");
-
-const wind =
-    document.getElementById("wind");
-
-const rainChance =
-    document.getElementById("rainChance");
-
-const hourlyForecast =
-    document.getElementById("hourlyForecast");
-
-const dailyForecast =
-    document.getElementById("dailyForecast");
-
-const sunrise =
-    document.getElementById("sunrise");
-
-const sunset =
-    document.getElementById("sunset");
+const sunrise = document.getElementById("sunrise");
+const sunset = document.getElementById("sunset");
 
 
-/* =========================================
-   HAVA DURUMU KODLARI
-   ========================================= */
+// ========================================
+// HAVA DURUMU KODLARI
+// ========================================
 
 function getWeatherInfo(code) {
 
     if (code === 0) {
-
         return {
             icon: "☀️",
             text: "Açık",
-            message: "* Gökyüzü tamamen açık.",
-            theme: "weather-sunny"
+            message: "* Gökyüzü tamamen açık."
         };
-
     }
 
     if (code === 1 || code === 2) {
-
         return {
             icon: "🌤️",
             text: "Parçalı Bulutlu",
-            message: "* Bulutlar gökyüzünde dolaşıyor.",
-            theme: "weather-cloudy"
+            message: "* Bulutlar ortaya çıktı."
         };
-
     }
 
     if (code === 3) {
-
         return {
             icon: "☁️",
             text: "Kapalı",
-            message: "* Gökyüzü bulutlarla kaplı.",
-            theme: "weather-cloudy"
+            message: "* Gökyüzü bulutlarla kaplı."
         };
-
     }
 
     if (code === 45 || code === 48) {
-
         return {
             icon: "🌫️",
             text: "Sisli",
-            message: "* Görüş mesafesi biraz düşük.",
-            theme: "weather-cloudy"
+            message: "* Görüş mesafesi biraz düşük."
         };
-
     }
 
     if (code >= 51 && code <= 57) {
-
         return {
             icon: "🌦️",
             text: "Çiseleme",
-            message: "* Hafif bir yağış var.",
-            theme: "weather-rain"
+            message: "* Hafif bir yağış var."
         };
-
     }
 
     if (code >= 61 && code <= 67) {
-
         return {
             icon: "🌧️",
             text: "Yağmurlu",
-            message: "* Yağmur yağıyor. Şemsiyeni unutma!",
-            theme: "weather-rain"
+            message: "* Yağmur yağıyor. Şemsiyeni unutma!"
         };
-
     }
 
     if (code >= 71 && code <= 77) {
-
         return {
             icon: "❄️",
             text: "Karlı",
-            message: "* Kar yağışı başladı!",
-            theme: "weather-snow"
+            message: "* Kar yağışı başladı!"
         };
-
     }
 
     if (code >= 80 && code <= 82) {
-
         return {
             icon: "🌧️",
             text: "Sağanak Yağış",
-            message: "* Sağanak yağış bekleniyor.",
-            theme: "weather-rain"
+            message: "* Sağanak yağış bekleniyor."
         };
-
     }
 
     if (code >= 95) {
-
         return {
             icon: "⛈️",
-            text: "Fırtınalı",
-            message: "* Fırtına geliyor!",
-            theme: "weather-storm"
+            text: "Gök Gürültülü Fırtına",
+            message: "* Fırtına geliyor!"
         };
-
     }
 
     return {
         icon: "❓",
         text: "Bilinmiyor",
-        message: "* Hava durumu bilinmiyor.",
-        theme: "weather-cloudy"
+        message: "* Hava durumu bilinmiyor."
     };
 }
 
 
-/* =========================================
-   TEMAYI DEĞİŞTİR
-   ========================================= */
-
-function changeWeatherTheme(theme) {
-
-    document.body.classList.remove(
-        "weather-sunny",
-        "weather-rain",
-        "weather-cloudy",
-        "weather-snow",
-        "weather-storm"
-    );
-
-    document.body.classList.add(theme);
-}
-
-
-/* =========================================
-   YEREL SAAT
-   ========================================= */
-
-function updateLocalTime(timezone) {
-
-    try {
-
-        const now =
-            new Date();
-
-        const formatter =
-            new Intl.DateTimeFormat(
-                "tr-TR",
-                {
-                    timeZone: timezone,
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false
-                }
-            );
-
-        localTime.textContent =
-            formatter.format(now);
-
-    }
-
-    catch {
-
-        localTime.textContent =
-            "--:--";
-
-    }
-}
-
-
-/* =========================================
-   ŞEHİR ARA
-   ========================================= */
+// ========================================
+// ŞEHİR ARAMA
+// ========================================
 
 async function searchCity(city) {
 
-    city = city.trim();
+    if (!city || city.trim() === "") {
 
-
-    if (city === "") {
-
-        statusBox.innerHTML =
-            "<span>›</span> Lütfen bir şehir adı yaz.";
+        statusBox.textContent =
+            "* Lütfen bir şehir adı yaz.";
 
         return;
     }
 
 
+    city = city.trim();
+
+
     try {
 
-        statusBox.innerHTML =
-            "<span>›</span> Şehir aranıyor...";
+        statusBox.textContent =
+            "* Şehir aranıyor...";
 
 
-        /* ================================
-           GEOCODING
-           DÜNYA ÇAPINDA
-        ================================= */
+        // ŞEHİR BUL
 
         const geoUrl =
             "https://geocoding-api.open-meteo.com/v1/search" +
-            "?name=" +
-            encodeURIComponent(city) +
-            "&count=5" +
+            "?name=" + encodeURIComponent(city) +
+            "&count=1" +
             "&language=tr" +
-            "&format=json";
+            "&format=json" +
+            "&countryCode=TR";
 
 
         const geoResponse =
@@ -280,11 +157,7 @@ async function searchCity(city) {
 
 
         if (!geoResponse.ok) {
-
-            throw new Error(
-                "Şehir servisi çalışmıyor."
-            );
-
+            throw new Error("Şehir servisine bağlanılamadı.");
         }
 
 
@@ -297,35 +170,31 @@ async function searchCity(city) {
             geoData.results.length === 0
         ) {
 
-            statusBox.innerHTML =
-                "<span>›</span> Şehir bulunamadı.";
+            statusBox.textContent =
+                "* Bu şehir bulunamadı.";
 
             return;
         }
 
 
-        /* İlk uygun sonucu kullan */
-
         const location =
             geoData.results[0];
 
 
-        statusBox.innerHTML =
-            "<span>›</span> Hava durumu yükleniyor...";
+        statusBox.textContent =
+            "* Hava durumu yükleniyor...";
 
 
-        /* ================================
-           WEATHER API
-        ================================= */
+        // ========================================
+        // HAVA DURUMU API
+        // ========================================
 
         const weatherUrl =
             "https://api.open-meteo.com/v1/forecast" +
 
-            "?latitude=" +
-            location.latitude +
+            "?latitude=" + location.latitude +
 
-            "&longitude=" +
-            location.longitude +
+            "&longitude=" + location.longitude +
 
             "&current=" +
             "temperature_2m," +
@@ -357,11 +226,7 @@ async function searchCity(city) {
 
 
         if (!weatherResponse.ok) {
-
-            throw new Error(
-                "Hava durumu alınamadı."
-            );
-
+            throw new Error("Hava durumu servisine bağlanılamadı.");
         }
 
 
@@ -369,9 +234,9 @@ async function searchCity(city) {
             await weatherResponse.json();
 
 
-        /* =================================
-           ANLIK HAVA
-        ================================= */
+        // ========================================
+        // ANA HAVA DURUMU
+        // ========================================
 
         const current =
             data.current;
@@ -388,8 +253,7 @@ async function searchCity(city) {
 
 
         countryName.textContent =
-            location.country ||
-            "Bilinmeyen ülke";
+            location.country || "Türkiye";
 
 
         temperature.textContent =
@@ -410,18 +274,6 @@ async function searchCity(city) {
             info.message;
 
 
-        maxTemp.textContent =
-            Math.round(
-                data.daily.temperature_2m_max[0]
-            ) + "°";
-
-
-        minTemp.textContent =
-            Math.round(
-                data.daily.temperature_2m_min[0]
-            ) + "°";
-
-
         feelsLike.textContent =
             Math.round(
                 current.apparent_temperature
@@ -429,51 +281,31 @@ async function searchCity(city) {
 
 
         humidity.textContent =
-            current.relative_humidity_2m +
-            "%";
+            current.relative_humidity_2m + "%";
 
 
         wind.textContent =
             Math.round(
                 current.wind_speed_10m
-            ) +
-            " km/h";
+            ) + " km/h";
 
+
+        // BUGÜNÜN YAĞIŞ İHTİMALİ
 
         rainChance.textContent =
             data.daily
-                .precipitation_probability_max[0] +
-            "%";
+                .precipitation_probability_max[0]
+            + "%";
 
 
-        /* =================================
-           YEREL SAAT
-        ================================= */
-
-        updateLocalTime(
-            data.timezone
-        );
-
-
-        /* =================================
-           ARKA PLAN
-        ================================= */
-
-        changeWeatherTheme(
-            info.theme
-        );
-
-
-        /* =================================
-           SAATLİK TAHMİN
-        ================================= */
+        // ========================================
+        // SAATLİK TAHMİN
+        // ========================================
 
         hourlyForecast.innerHTML = "";
 
 
-        /*
-           API'deki ilk 24 saat
-        */
+        // İlk 24 saat
 
         for (
             let i = 0;
@@ -494,8 +326,7 @@ async function searchCity(city) {
 
 
             const rain =
-                data.hourly
-                    .precipitation_probability[i];
+                data.hourly.precipitation_probability[i];
 
 
             const hourInfo =
@@ -503,16 +334,11 @@ async function searchCity(city) {
 
 
             const hour =
-                time.substring(
-                    11,
-                    16
-                );
+                time.substring(11, 16);
 
 
             const card =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             card.className =
@@ -534,27 +360,24 @@ async function searchCity(city) {
                 </div>
 
                 <div class="rain">
-                    Yağış ${rain}%
+                    Yağış: ${rain}%
                 </div>
 
             `;
 
 
-            hourlyForecast.appendChild(
-                card
-            );
+            hourlyForecast.appendChild(card);
         }
 
 
-        /* =================================
-           7 GÜNLÜK TAHMİN
-        ================================= */
+        // ========================================
+        // 7 GÜNLÜK TAHMİN
+        // ========================================
 
         dailyForecast.innerHTML = "";
 
 
         const dayNames = [
-
             "Pazar",
             "Pazartesi",
             "Salı",
@@ -562,7 +385,6 @@ async function searchCity(city) {
             "Perşembe",
             "Cuma",
             "Cumartesi"
-
         ];
 
 
@@ -588,21 +410,19 @@ async function searchCity(city) {
                 data.daily.weather_code[i];
 
 
-            const dayInfo =
+            const info =
                 getWeatherInfo(code);
 
 
-            const high =
+            const maxTemp =
                 Math.round(
-                    data.daily
-                        .temperature_2m_max[i]
+                    data.daily.temperature_2m_max[i]
                 );
 
 
-            const low =
+            const minTemp =
                 Math.round(
-                    data.daily
-                        .temperature_2m_min[i]
+                    data.daily.temperature_2m_min[i]
                 );
 
 
@@ -612,9 +432,7 @@ async function searchCity(city) {
 
 
             const card =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             card.className =
@@ -624,37 +442,31 @@ async function searchCity(city) {
             card.innerHTML = `
 
                 <div class="day-name">
-                    ${
-                        i === 0
-                            ? "BUGÜN"
-                            : dayName
-                    }
+                    ${i === 0 ? "BUGÜN" : dayName}
                 </div>
 
                 <div class="day-icon">
-                    ${dayInfo.icon}
+                    ${info.icon}
                 </div>
 
                 <div class="day-temp">
-                    ${high}° / ${low}°
+                    ${maxTemp}° / ${minTemp}°
                 </div>
 
                 <div class="day-rain">
-                    Yağış ${rain}%
+                    Yağış: ${rain}%
                 </div>
 
             `;
 
 
-            dailyForecast.appendChild(
-                card
-            );
+            dailyForecast.appendChild(card);
         }
 
 
-        /* =================================
-           GÜNEŞ
-        ================================= */
+        // ========================================
+        // GÜNEŞ DOĞUM / BATIM
+        // ========================================
 
         sunrise.textContent =
             data.daily.sunrise[0]
@@ -666,12 +478,12 @@ async function searchCity(city) {
                 .substring(11, 16);
 
 
-        /* =================================
-           BAŞARILI
-        ================================= */
+        // ========================================
+        // SON DURUM
+        // ========================================
 
-        statusBox.innerHTML =
-            "<span>›</span> " +
+        statusBox.textContent =
+            "* " +
             location.name +
             " hava durumu yüklendi!";
 
@@ -680,23 +492,20 @@ async function searchCity(city) {
 
     catch (error) {
 
-        console.error(
-            "WeatherTale:",
-            error
-        );
+        console.error(error);
 
 
-        statusBox.innerHTML =
-            "<span>›</span> " +
-            "Hava durumu alınamadı. Lütfen tekrar deneyin.";
+        statusBox.textContent =
+            "* Bir hata oluştu. İnternet bağlantını kontrol et.";
 
     }
+
 }
 
 
-/* =========================================
-   ARA BUTONU
-   ========================================= */
+// ========================================
+// ARA BUTONU
+// ========================================
 
 searchButton.addEventListener(
     "click",
@@ -710,17 +519,15 @@ searchButton.addEventListener(
 );
 
 
-/* =========================================
-   ENTER
-   ========================================= */
+// ========================================
+// ENTER TUŞU
+// ========================================
 
 cityInput.addEventListener(
     "keydown",
     function(event) {
 
-        if (
-            event.key === "Enter"
-        ) {
+        if (event.key === "Enter") {
 
             searchCity(
                 cityInput.value
@@ -732,8 +539,42 @@ cityInput.addEventListener(
 );
 
 
-/* =========================================
-   BAŞLANGIÇ
-   ========================================= */
+// ========================================
+// ŞEHİR BUTONLARI
+// ========================================
+
+const cityButtons =
+    document.querySelectorAll(
+        ".city-button"
+    );
+
+
+cityButtons.forEach(
+    function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                const city =
+                    button.dataset.city;
+
+
+                cityInput.value =
+                    city;
+
+
+                searchCity(city);
+
+            }
+        );
+
+    }
+);
+
+
+// ========================================
+// SİTE AÇILINCA AYDIN'I GETİR
+// ========================================
 
 searchCity("Aydın");
