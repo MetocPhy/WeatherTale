@@ -1,203 +1,528 @@
+
 // ========================================
-// WEATHERTALE - TEMEL JAVASCRIPT
+// WEATHERTALE
+// GERÇEK HAVA DURUMU SİSTEMİ
 // ========================================
 
 
-// ELEMENTLER
+// HTML ELEMENTLERİ
 
 const cityInput = document.getElementById("cityInput");
 const searchButton = document.getElementById("searchButton");
-const searchMessage = document.getElementById("searchMessage");
+
+const statusBox = document.getElementById("status");
 
 const cityName = document.getElementById("cityName");
 const countryName = document.getElementById("countryName");
 
 const temperature = document.getElementById("temperature");
-const temperatureText = document.getElementById("temperatureText");
-const temperatureFill = document.getElementById("temperatureFill");
-
 const weatherIcon = document.getElementById("weatherIcon");
-const weatherDescription = document.getElementById("weatherDescription");
+const description = document.getElementById("description");
+const rpgMessage = document.getElementById("rpgMessage");
 
 const feelsLike = document.getElementById("feelsLike");
 const humidity = document.getElementById("humidity");
 const wind = document.getElementById("wind");
-const pressure = document.getElementById("pressure");
+const rainChance = document.getElementById("rainChance");
 
-const themeButton = document.getElementById("themeButton");
+const hourlyForecast = document.getElementById("hourlyForecast");
+const dailyForecast = document.getElementById("dailyForecast");
+
+const sunrise = document.getElementById("sunrise");
+const sunset = document.getElementById("sunset");
 
 
-// ÖRNEK ŞEHİRLER
-// Gerçek API'yi sonraki aşamada bağlayacağız.
+// ========================================
+// HAVA DURUMU KODLARI
+// ========================================
 
-const cities = {
+function getWeatherInfo(code) {
 
-    "istanbul": {
-        city: "ISTANBUL",
-        country: "TÜRKİYE",
-        temp: 22,
-        feels: 23,
-        humidity: 61,
-        wind: 14,
-        pressure: 1014,
-        icon: "☀",
-        description: "Açık"
-    },
-
-    "ankara": {
-        city: "ANKARA",
-        country: "TÜRKİYE",
-        temp: 19,
-        feels: 18,
-        humidity: 42,
-        wind: 11,
-        pressure: 1017,
-        icon: "☁",
-        description: "Parçalı bulutlu"
-    },
-
-    "izmir": {
-        city: "İZMİR",
-        country: "TÜRKİYE",
-        temp: 25,
-        feels: 26,
-        humidity: 48,
-        wind: 16,
-        pressure: 1013,
-        icon: "☀",
-        description: "Güneşli"
-    },
-
-    "new york": {
-        city: "NEW YORK",
-        country: "USA",
-        temp: 24,
-        feels: 25,
-        humidity: 48,
-        wind: 12,
-        pressure: 1015,
-        icon: "☀",
-        description: "Açık"
-    },
-
-    "londra": {
-        city: "LONDRA",
-        country: "İNGİLTERE",
-        temp: 17,
-        feels: 16,
-        humidity: 72,
-        wind: 18,
-        pressure: 1008,
-        icon: "🌧",
-        description: "Yağmurlu"
+    if (code === 0) {
+        return {
+            icon: "☀️",
+            text: "Açık",
+            message: "* Gökyüzü tamamen açık."
+        };
     }
 
-};
+    if (code === 1 || code === 2) {
+        return {
+            icon: "🌤️",
+            text: "Parçalı Bulutlu",
+            message: "* Bulutlar ortaya çıktı."
+        };
+    }
+
+    if (code === 3) {
+        return {
+            icon: "☁️",
+            text: "Kapalı",
+            message: "* Gökyüzü bulutlarla kaplı."
+        };
+    }
+
+    if (code === 45 || code === 48) {
+        return {
+            icon: "🌫️",
+            text: "Sisli",
+            message: "* Görüş mesafesi biraz düşük."
+        };
+    }
+
+    if (code >= 51 && code <= 57) {
+        return {
+            icon: "🌦️",
+            text: "Çiseleme",
+            message: "* Hafif bir yağış var."
+        };
+    }
+
+    if (code >= 61 && code <= 67) {
+        return {
+            icon: "🌧️",
+            text: "Yağmurlu",
+            message: "* Yağmur yağıyor. Şemsiyeni unutma!"
+        };
+    }
+
+    if (code >= 71 && code <= 77) {
+        return {
+            icon: "❄️",
+            text: "Karlı",
+            message: "* Kar yağışı başladı!"
+        };
+    }
+
+    if (code >= 80 && code <= 82) {
+        return {
+            icon: "🌧️",
+            text: "Sağanak Yağış",
+            message: "* Sağanak yağış bekleniyor."
+        };
+    }
+
+    if (code >= 95) {
+        return {
+            icon: "⛈️",
+            text: "Gök Gürültülü Fırtına",
+            message: "* Fırtına geliyor!"
+        };
+    }
+
+    return {
+        icon: "❓",
+        text: "Bilinmiyor",
+        message: "* Hava durumu bilinmiyor."
+    };
+}
 
 
+// ========================================
 // ŞEHİR ARAMA
+// ========================================
 
-function searchCity() {
+async function searchCity(city) {
 
-    const search = cityInput.value
-        .trim()
-        .toLowerCase();
+    if (!city || city.trim() === "") {
 
-
-    if (search === "") {
-
-        searchMessage.textContent =
-            "Bir şehir yazmalısın.";
+        statusBox.textContent =
+            "* Lütfen bir şehir adı yaz.";
 
         return;
     }
 
 
-    if (!cities[search]) {
+    city = city.trim();
 
-        searchMessage.textContent =
-            "Bu şehir henüz sistemde yok.";
 
-        return;
+    try {
+
+        statusBox.textContent =
+            "* Şehir aranıyor...";
+
+
+        // ŞEHİR BUL
+
+        const geoUrl =
+            "https://geocoding-api.open-meteo.com/v1/search" +
+            "?name=" + encodeURIComponent(city) +
+            "&count=1" +
+            "&language=tr" +
+            "&format=json" +
+            "&countryCode=TR";
+
+
+        const geoResponse =
+            await fetch(geoUrl);
+
+
+        if (!geoResponse.ok) {
+            throw new Error("Şehir servisine bağlanılamadı.");
+        }
+
+
+        const geoData =
+            await geoResponse.json();
+
+
+        if (
+            !geoData.results ||
+            geoData.results.length === 0
+        ) {
+
+            statusBox.textContent =
+                "* Bu şehir bulunamadı.";
+
+            return;
+        }
+
+
+        const location =
+            geoData.results[0];
+
+
+        statusBox.textContent =
+            "* Hava durumu yükleniyor...";
+
+
+        // ========================================
+        // HAVA DURUMU API
+        // ========================================
+
+        const weatherUrl =
+            "https://api.open-meteo.com/v1/forecast" +
+
+            "?latitude=" + location.latitude +
+
+            "&longitude=" + location.longitude +
+
+            "&current=" +
+            "temperature_2m," +
+            "relative_humidity_2m," +
+            "apparent_temperature," +
+            "weather_code," +
+            "wind_speed_10m" +
+
+            "&hourly=" +
+            "temperature_2m," +
+            "weather_code," +
+            "precipitation_probability" +
+
+            "&daily=" +
+            "weather_code," +
+            "temperature_2m_max," +
+            "temperature_2m_min," +
+            "sunrise," +
+            "sunset," +
+            "precipitation_probability_max" +
+
+            "&timezone=auto" +
+
+            "&forecast_days=7";
+
+
+        const weatherResponse =
+            await fetch(weatherUrl);
+
+
+        if (!weatherResponse.ok) {
+            throw new Error("Hava durumu servisine bağlanılamadı.");
+        }
+
+
+        const data =
+            await weatherResponse.json();
+
+
+        // ========================================
+        // ANA HAVA DURUMU
+        // ========================================
+
+        const current =
+            data.current;
+
+
+        const info =
+            getWeatherInfo(
+                current.weather_code
+            );
+
+
+        cityName.textContent =
+            location.name.toUpperCase();
+
+
+        countryName.textContent =
+            location.country || "Türkiye";
+
+
+        temperature.textContent =
+            Math.round(
+                current.temperature_2m
+            );
+
+
+        weatherIcon.textContent =
+            info.icon;
+
+
+        description.textContent =
+            info.text;
+
+
+        rpgMessage.textContent =
+            info.message;
+
+
+        feelsLike.textContent =
+            Math.round(
+                current.apparent_temperature
+            ) + "°C";
+
+
+        humidity.textContent =
+            current.relative_humidity_2m + "%";
+
+
+        wind.textContent =
+            Math.round(
+                current.wind_speed_10m
+            ) + " km/h";
+
+
+        // BUGÜNÜN YAĞIŞ İHTİMALİ
+
+        rainChance.textContent =
+            data.daily
+                .precipitation_probability_max[0]
+            + "%";
+
+
+        // ========================================
+        // SAATLİK TAHMİN
+        // ========================================
+
+        hourlyForecast.innerHTML = "";
+
+
+        // İlk 24 saat
+
+        for (
+            let i = 0;
+            i < 24;
+            i++
+        ) {
+
+            const time =
+                data.hourly.time[i];
+
+
+            const temp =
+                data.hourly.temperature_2m[i];
+
+
+            const code =
+                data.hourly.weather_code[i];
+
+
+            const rain =
+                data.hourly.precipitation_probability[i];
+
+
+            const hourInfo =
+                getWeatherInfo(code);
+
+
+            const hour =
+                time.substring(11, 16);
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "hour-card";
+
+
+            card.innerHTML = `
+
+                <div class="time">
+                    ${hour}
+                </div>
+
+                <div class="icon">
+                    ${hourInfo.icon}
+                </div>
+
+                <div class="temp">
+                    ${Math.round(temp)}°C
+                </div>
+
+                <div class="rain">
+                    Yağış: ${rain}%
+                </div>
+
+            `;
+
+
+            hourlyForecast.appendChild(card);
+        }
+
+
+        // ========================================
+        // 7 GÜNLÜK TAHMİN
+        // ========================================
+
+        dailyForecast.innerHTML = "";
+
+
+        const dayNames = [
+            "Pazar",
+            "Pazartesi",
+            "Salı",
+            "Çarşamba",
+            "Perşembe",
+            "Cuma",
+            "Cumartesi"
+        ];
+
+
+        for (
+            let i = 0;
+            i < 7;
+            i++
+        ) {
+
+            const date =
+                new Date(
+                    data.daily.time[i]
+                );
+
+
+            const dayName =
+                dayNames[
+                    date.getDay()
+                ];
+
+
+            const code =
+                data.daily.weather_code[i];
+
+
+            const info =
+                getWeatherInfo(code);
+
+
+            const maxTemp =
+                Math.round(
+                    data.daily.temperature_2m_max[i]
+                );
+
+
+            const minTemp =
+                Math.round(
+                    data.daily.temperature_2m_min[i]
+                );
+
+
+            const rain =
+                data.daily
+                    .precipitation_probability_max[i];
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "day-card";
+
+
+            card.innerHTML = `
+
+                <div class="day-name">
+                    ${i === 0 ? "BUGÜN" : dayName}
+                </div>
+
+                <div class="day-icon">
+                    ${info.icon}
+                </div>
+
+                <div class="day-temp">
+                    ${maxTemp}° / ${minTemp}°
+                </div>
+
+                <div class="day-rain">
+                    Yağış: ${rain}%
+                </div>
+
+            `;
+
+
+            dailyForecast.appendChild(card);
+        }
+
+
+        // ========================================
+        // GÜNEŞ DOĞUM / BATIM
+        // ========================================
+
+        sunrise.textContent =
+            data.daily.sunrise[0]
+                .substring(11, 16);
+
+
+        sunset.textContent =
+            data.daily.sunset[0]
+                .substring(11, 16);
+
+
+        // ========================================
+        // SON DURUM
+        // ========================================
+
+        statusBox.textContent =
+            "* " +
+            location.name +
+            " hava durumu yüklendi!";
+
+
     }
 
+    catch (error) {
 
-    const data = cities[search];
-
-
-    // Mesajı temizle
-    searchMessage.textContent = "";
+        console.error(error);
 
 
-    // Bilgileri değiştir
+        statusBox.textContent =
+            "* Bir hata oluştu. İnternet bağlantını kontrol et.";
 
-    cityName.textContent = data.city;
-
-    countryName.textContent = data.country;
-
-    temperature.textContent = data.temp;
-
-    temperatureText.textContent =
-        data.temp + "°C";
-
-    feelsLike.textContent =
-        data.feels + "°C";
-
-    humidity.textContent =
-        data.humidity + "%";
-
-    wind.textContent =
-        data.wind + " km/h";
-
-    pressure.textContent =
-        data.pressure + " hPa";
-
-    weatherIcon.textContent =
-        data.icon;
-
-    weatherDescription.textContent =
-        data.description;
-
-
-    // Sıcaklık barı
-
-    let percentage =
-        ((data.temp + 10) / 50) * 100;
-
-
-    if (percentage < 5) {
-        percentage = 5;
     }
-
-    if (percentage > 100) {
-        percentage = 100;
-    }
-
-
-    temperatureFill.style.width =
-        percentage + "%";
-
-
-    // Sonuç bölümüne kaydır
-
-    document.getElementById("weatherSection")
-        .scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
 
 }
 
 
-// ARAMA BUTONU
+// ========================================
+// ARA BUTONU
+// ========================================
 
 searchButton.addEventListener(
     "click",
-    searchCity
+    function() {
+
+        searchCity(
+            cityInput.value
+        );
+
+    }
 );
 
 
-// ENTER İLE ARAMA
+// ========================================
+// ENTER TUŞU
+// ========================================
 
 cityInput.addEventListener(
     "keydown",
@@ -205,7 +530,9 @@ cityInput.addEventListener(
 
         if (event.key === "Enter") {
 
-            searchCity();
+            searchCity(
+                cityInput.value
+            );
 
         }
 
@@ -213,41 +540,42 @@ cityInput.addEventListener(
 );
 
 
-// TEMA BUTONU
+// ========================================
+// ŞEHİR BUTONLARI
+// ========================================
 
-let lightMode = false;
-
-
-themeButton.addEventListener(
-    "click",
-    function() {
-
-        lightMode = !lightMode;
+const cityButtons =
+    document.querySelectorAll(
+        ".city-button"
+    );
 
 
-        if (lightMode) {
+cityButtons.forEach(
+    function(button) {
 
-            document.body.style.background =
-                "#eeeeee";
+        button.addEventListener(
+            "click",
+            function() {
 
-            document.body.style.color =
-                "#111";
+                const city =
+                    button.dataset.city;
 
-            themeButton.textContent =
-                "☾";
 
-        } else {
+                cityInput.value =
+                    city;
 
-            document.body.style.background =
-                "#050505";
 
-            document.body.style.color =
-                "white";
+                searchCity(city);
 
-            themeButton.textContent =
-                "☼";
-
-        }
+            }
+        );
 
     }
 );
+
+
+// ========================================
+// SİTE AÇILINCA AYDIN'I GETİR
+// ========================================
+
+searchCity("Aydın");
