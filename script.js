@@ -1,770 +1,739 @@
-/* ========================================
-   WEATHERTALE
-   MODERN UNDERTALE WEATHER DESIGN
-======================================== */
+/* =========================================
+   WEATHERTALE V2
+   GLOBAL WEATHER SYSTEM
+   ========================================= */
 
-* {
-    box-sizing: border-box;
+
+/* =========================================
+   ELEMENTLER
+   ========================================= */
+
+const cityInput =
+    document.getElementById("cityInput");
+
+const searchButton =
+    document.getElementById("searchButton");
+
+const statusBox =
+    document.getElementById("status");
+
+const cityName =
+    document.getElementById("cityName");
+
+const countryName =
+    document.getElementById("countryName");
+
+const localTime =
+    document.getElementById("localTime");
+
+const temperature =
+    document.getElementById("temperature");
+
+const weatherIcon =
+    document.getElementById("weatherIcon");
+
+const description =
+    document.getElementById("description");
+
+const rpgMessage =
+    document.getElementById("rpgMessage");
+
+const maxTemp =
+    document.getElementById("maxTemp");
+
+const minTemp =
+    document.getElementById("minTemp");
+
+const feelsLike =
+    document.getElementById("feelsLike");
+
+const humidity =
+    document.getElementById("humidity");
+
+const wind =
+    document.getElementById("wind");
+
+const rainChance =
+    document.getElementById("rainChance");
+
+const hourlyForecast =
+    document.getElementById("hourlyForecast");
+
+const dailyForecast =
+    document.getElementById("dailyForecast");
+
+const sunrise =
+    document.getElementById("sunrise");
+
+const sunset =
+    document.getElementById("sunset");
+
+
+/* =========================================
+   HAVA DURUMU KODLARI
+   ========================================= */
+
+function getWeatherInfo(code) {
+
+    if (code === 0) {
+
+        return {
+            icon: "☀️",
+            text: "Açık",
+            message: "* Gökyüzü tamamen açık.",
+            theme: "weather-sunny"
+        };
+
+    }
+
+    if (code === 1 || code === 2) {
+
+        return {
+            icon: "🌤️",
+            text: "Parçalı Bulutlu",
+            message: "* Bulutlar gökyüzünde dolaşıyor.",
+            theme: "weather-cloudy"
+        };
+
+    }
+
+    if (code === 3) {
+
+        return {
+            icon: "☁️",
+            text: "Kapalı",
+            message: "* Gökyüzü bulutlarla kaplı.",
+            theme: "weather-cloudy"
+        };
+
+    }
+
+    if (code === 45 || code === 48) {
+
+        return {
+            icon: "🌫️",
+            text: "Sisli",
+            message: "* Görüş mesafesi biraz düşük.",
+            theme: "weather-cloudy"
+        };
+
+    }
+
+    if (code >= 51 && code <= 57) {
+
+        return {
+            icon: "🌦️",
+            text: "Çiseleme",
+            message: "* Hafif bir yağış var.",
+            theme: "weather-rain"
+        };
+
+    }
+
+    if (code >= 61 && code <= 67) {
+
+        return {
+            icon: "🌧️",
+            text: "Yağmurlu",
+            message: "* Yağmur yağıyor. Şemsiyeni unutma!",
+            theme: "weather-rain"
+        };
+
+    }
+
+    if (code >= 71 && code <= 77) {
+
+        return {
+            icon: "❄️",
+            text: "Karlı",
+            message: "* Kar yağışı başladı!",
+            theme: "weather-snow"
+        };
+
+    }
+
+    if (code >= 80 && code <= 82) {
+
+        return {
+            icon: "🌧️",
+            text: "Sağanak Yağış",
+            message: "* Sağanak yağış bekleniyor.",
+            theme: "weather-rain"
+        };
+
+    }
+
+    if (code >= 95) {
+
+        return {
+            icon: "⛈️",
+            text: "Fırtınalı",
+            message: "* Fırtına geliyor!",
+            theme: "weather-storm"
+        };
+
+    }
+
+    return {
+        icon: "❓",
+        text: "Bilinmiyor",
+        message: "* Hava durumu bilinmiyor.",
+        theme: "weather-cloudy"
+    };
 }
 
-html {
-    scroll-behavior: smooth;
+
+/* =========================================
+   TEMAYI DEĞİŞTİR
+   ========================================= */
+
+function changeWeatherTheme(theme) {
+
+    document.body.classList.remove(
+        "weather-sunny",
+        "weather-rain",
+        "weather-cloudy",
+        "weather-snow",
+        "weather-storm"
+    );
+
+    document.body.classList.add(theme);
 }
 
-body {
-    margin: 0;
-    min-height: 100vh;
 
-    background:
-        radial-gradient(
-            circle at top,
-            #171717 0%,
-            #080808 45%,
-            #030303 100%
+/* =========================================
+   YEREL SAAT
+   ========================================= */
+
+function updateLocalTime(timezone) {
+
+    try {
+
+        const now =
+            new Date();
+
+        const formatter =
+            new Intl.DateTimeFormat(
+                "tr-TR",
+                {
+                    timeZone: timezone,
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                }
+            );
+
+        localTime.textContent =
+            formatter.format(now);
+
+    }
+
+    catch {
+
+        localTime.textContent =
+            "--:--";
+
+    }
+}
+
+
+/* =========================================
+   ŞEHİR ARA
+   ========================================= */
+
+async function searchCity(city) {
+
+    city = city.trim();
+
+
+    if (city === "") {
+
+        statusBox.innerHTML =
+            "<span>›</span> Lütfen bir şehir adı yaz.";
+
+        return;
+    }
+
+
+    try {
+
+        statusBox.innerHTML =
+            "<span>›</span> Şehir aranıyor...";
+
+
+        /* ================================
+           GEOCODING
+           DÜNYA ÇAPINDA
+        ================================= */
+
+        const geoUrl =
+            "https://geocoding-api.open-meteo.com/v1/search" +
+            "?name=" +
+            encodeURIComponent(city) +
+            "&count=5" +
+            "&language=tr" +
+            "&format=json";
+
+
+        const geoResponse =
+            await fetch(geoUrl);
+
+
+        if (!geoResponse.ok) {
+
+            throw new Error(
+                "Şehir servisi çalışmıyor."
+            );
+
+        }
+
+
+        const geoData =
+            await geoResponse.json();
+
+
+        if (
+            !geoData.results ||
+            geoData.results.length === 0
+        ) {
+
+            statusBox.innerHTML =
+                "<span>›</span> Şehir bulunamadı.";
+
+            return;
+        }
+
+
+        /* İlk uygun sonucu kullan */
+
+        const location =
+            geoData.results[0];
+
+
+        statusBox.innerHTML =
+            "<span>›</span> Hava durumu yükleniyor...";
+
+
+        /* ================================
+           WEATHER API
+        ================================= */
+
+        const weatherUrl =
+            "https://api.open-meteo.com/v1/forecast" +
+
+            "?latitude=" +
+            location.latitude +
+
+            "&longitude=" +
+            location.longitude +
+
+            "&current=" +
+            "temperature_2m," +
+            "relative_humidity_2m," +
+            "apparent_temperature," +
+            "weather_code," +
+            "wind_speed_10m" +
+
+            "&hourly=" +
+            "temperature_2m," +
+            "weather_code," +
+            "precipitation_probability" +
+
+            "&daily=" +
+            "weather_code," +
+            "temperature_2m_max," +
+            "temperature_2m_min," +
+            "sunrise," +
+            "sunset," +
+            "precipitation_probability_max" +
+
+            "&timezone=auto" +
+
+            "&forecast_days=7";
+
+
+        const weatherResponse =
+            await fetch(weatherUrl);
+
+
+        if (!weatherResponse.ok) {
+
+            throw new Error(
+                "Hava durumu alınamadı."
+            );
+
+        }
+
+
+        const data =
+            await weatherResponse.json();
+
+
+        /* =================================
+           ANLIK HAVA
+        ================================= */
+
+        const current =
+            data.current;
+
+
+        const info =
+            getWeatherInfo(
+                current.weather_code
+            );
+
+
+        cityName.textContent =
+            location.name.toUpperCase();
+
+
+        countryName.textContent =
+            location.country ||
+            "Bilinmeyen ülke";
+
+
+        temperature.textContent =
+            Math.round(
+                current.temperature_2m
+            );
+
+
+        weatherIcon.textContent =
+            info.icon;
+
+
+        description.textContent =
+            info.text;
+
+
+        rpgMessage.textContent =
+            info.message;
+
+
+        maxTemp.textContent =
+            Math.round(
+                data.daily.temperature_2m_max[0]
+            ) + "°";
+
+
+        minTemp.textContent =
+            Math.round(
+                data.daily.temperature_2m_min[0]
+            ) + "°";
+
+
+        feelsLike.textContent =
+            Math.round(
+                current.apparent_temperature
+            ) + "°C";
+
+
+        humidity.textContent =
+            current.relative_humidity_2m +
+            "%";
+
+
+        wind.textContent =
+            Math.round(
+                current.wind_speed_10m
+            ) +
+            " km/h";
+
+
+        rainChance.textContent =
+            data.daily
+                .precipitation_probability_max[0] +
+            "%";
+
+
+        /* =================================
+           YEREL SAAT
+        ================================= */
+
+        updateLocalTime(
+            data.timezone
         );
 
-    color: #ffffff;
 
-    font-family:
-        "Courier New",
-        monospace;
+        /* =================================
+           ARKA PLAN
+        ================================= */
 
-    overflow-x: hidden;
-}
-
-
-/* ========================================
-   ARKA PLAN
-======================================== */
-
-.background-glow {
-    position: fixed;
-
-    width: 500px;
-    height: 500px;
-
-    left: 50%;
-    top: -300px;
-
-    transform: translateX(-50%);
-
-    background: rgba(255, 255, 0, 0.06);
-
-    filter: blur(80px);
-
-    pointer-events: none;
-}
-
-
-/* ========================================
-   ANA KUTU
-======================================== */
-
-.game-screen {
-    width: 92%;
-    max-width: 1100px;
-
-    margin: 35px auto;
-}
-
-
-/* ========================================
-   HEADER
-======================================== */
-
-.header {
-    text-align: center;
-
-    border: 3px solid #ffffff;
-
-    padding: 35px 20px;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,0.04),
-            rgba(255,255,255,0)
+        changeWeatherTheme(
+            info.theme
         );
 
-    position: relative;
-}
 
-.logo {
-    font-size: 46px;
-    font-weight: bold;
-    letter-spacing: 3px;
-}
+        /* =================================
+           SAATLİK TAHMİN
+        ================================= */
 
-.logo span:last-child {
-    color: #ffff00;
-}
-
-.heart {
-    color: #ff3333;
-    margin-right: 5px;
-}
-
-.subtitle {
-    margin: 12px 0 0;
-
-    color: #aaaaaa;
-
-    letter-spacing: 4px;
-
-    font-size: 14px;
-}
+        hourlyForecast.innerHTML = "";
 
 
-/* ========================================
-   ARAMA
-======================================== */
+        /*
+           API'deki ilk 24 saat
+        */
 
-.search-section {
-    margin-top: 25px;
-}
+        for (
+            let i = 0;
+            i < 24;
+            i++
+        ) {
 
-.search-box {
-    display: flex;
-
-    gap: 12px;
-}
-
-#cityInput {
-    flex: 1;
-
-    min-width: 0;
-
-    padding: 18px 20px;
-
-    background: #050505;
-
-    color: #ffffff;
-
-    border: 2px solid #777777;
-
-    outline: none;
-
-    font-family: inherit;
-
-    font-size: 17px;
-
-    transition: 0.2s;
-}
-
-#cityInput:focus {
-    border-color: #ffff00;
-
-    box-shadow:
-        0 0 15px rgba(255,255,0,0.12);
-}
-
-#cityInput::placeholder {
-    color: #666666;
-}
-
-#searchButton {
-    padding: 0 30px;
-
-    background: #ffff00;
-
-    color: #000000;
-
-    border: 2px solid #ffff00;
-
-    font-family: inherit;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-#searchButton:hover {
-    background: #ffffff;
-
-    border-color: #ffffff;
-
-    transform: translateY(-2px);
-}
-
-#searchButton:active {
-    transform: translateY(0);
-}
-
-.search-hint {
-    color: #666666;
-
-    margin-top: 10px;
-
-    font-size: 12px;
-}
+            const time =
+                data.hourly.time[i];
 
 
-/* ========================================
-   STATUS
-======================================== */
-
-.status {
-    margin-top: 20px;
-
-    padding: 14px 16px;
-
-    border-left: 4px solid #ffff00;
-
-    background: rgba(255,255,255,0.025);
-
-    color: #ffff00;
-
-    font-size: 14px;
-}
-
-.status span {
-    font-size: 20px;
-
-    margin-right: 5px;
-}
+            const temp =
+                data.hourly.temperature_2m[i];
 
 
-/* ========================================
-   HAVA DURUMU
-======================================== */
+            const code =
+                data.hourly.weather_code[i];
 
-#weather {
-    margin-top: 20px;
-}
 
-.weather-card {
-    border: 3px solid #ffffff;
+            const rain =
+                data.hourly
+                    .precipitation_probability[i];
 
-    padding: 30px;
 
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,0.035),
-            rgba(255,255,255,0.01)
+            const hourInfo =
+                getWeatherInfo(code);
+
+
+            const hour =
+                time.substring(
+                    11,
+                    16
+                );
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "hour-card";
+
+
+            card.innerHTML = `
+
+                <div class="time">
+                    ${hour}
+                </div>
+
+                <div class="icon">
+                    ${hourInfo.icon}
+                </div>
+
+                <div class="temp">
+                    ${Math.round(temp)}°C
+                </div>
+
+                <div class="rain">
+                    Yağış ${rain}%
+                </div>
+
+            `;
+
+
+            hourlyForecast.appendChild(
+                card
+            );
+        }
+
+
+        /* =================================
+           7 GÜNLÜK TAHMİN
+        ================================= */
+
+        dailyForecast.innerHTML = "";
+
+
+        const dayNames = [
+
+            "Pazar",
+            "Pazartesi",
+            "Salı",
+            "Çarşamba",
+            "Perşembe",
+            "Cuma",
+            "Cumartesi"
+
+        ];
+
+
+        for (
+            let i = 0;
+            i < 7;
+            i++
+        ) {
+
+            const date =
+                new Date(
+                    data.daily.time[i]
+                );
+
+
+            const dayName =
+                dayNames[
+                    date.getDay()
+                ];
+
+
+            const code =
+                data.daily.weather_code[i];
+
+
+            const dayInfo =
+                getWeatherInfo(code);
+
+
+            const high =
+                Math.round(
+                    data.daily
+                        .temperature_2m_max[i]
+                );
+
+
+            const low =
+                Math.round(
+                    data.daily
+                        .temperature_2m_min[i]
+                );
+
+
+            const rain =
+                data.daily
+                    .precipitation_probability_max[i];
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "day-card";
+
+
+            card.innerHTML = `
+
+                <div class="day-name">
+                    ${
+                        i === 0
+                            ? "BUGÜN"
+                            : dayName
+                    }
+                </div>
+
+                <div class="day-icon">
+                    ${dayInfo.icon}
+                </div>
+
+                <div class="day-temp">
+                    ${high}° / ${low}°
+                </div>
+
+                <div class="day-rain">
+                    Yağış ${rain}%
+                </div>
+
+            `;
+
+
+            dailyForecast.appendChild(
+                card
+            );
+        }
+
+
+        /* =================================
+           GÜNEŞ
+        ================================= */
+
+        sunrise.textContent =
+            data.daily.sunrise[0]
+                .substring(11, 16);
+
+
+        sunset.textContent =
+            data.daily.sunset[0]
+                .substring(11, 16);
+
+
+        /* =================================
+           BAŞARILI
+        ================================= */
+
+        statusBox.innerHTML =
+            "<span>›</span> " +
+            location.name +
+            " hava durumu yüklendi!";
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "WeatherTale:",
+            error
         );
-}
 
 
-/* ========================================
-   HAVA BAŞLIĞI
-======================================== */
+        statusBox.innerHTML =
+            "<span>›</span> " +
+            "Hava durumu alınamadı. Lütfen tekrar deneyin.";
 
-.weather-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-}
-
-.location-label {
-    color: #777777;
-
-    font-size: 12px;
-
-    letter-spacing: 2px;
-
-    margin-bottom: 8px;
-}
-
-.weather-header h1 {
-    margin: 0;
-
-    font-size: 38px;
-
-    letter-spacing: 2px;
-}
-
-.weather-header p {
-    margin: 7px 0 0;
-
-    color: #999999;
-
-    font-size: 15px;
-}
-
-.weather-icon {
-    font-size: 85px;
-
-    line-height: 1;
-}
-
-
-/* ========================================
-   SICAKLIK
-======================================== */
-
-.temperature-row {
-    display: flex;
-
-    align-items: flex-start;
-
-    margin-top: 25px;
-}
-
-.temperature {
-    font-size: 90px;
-
-    font-weight: bold;
-
-    line-height: 0.9;
-
-    color: #ffff00;
-}
-
-.temperature-unit {
-    color: #aaaaaa;
-
-    font-size: 25px;
-
-    margin-left: 8px;
-
-    margin-top: 5px;
-}
-
-.description {
-    font-size: 23px;
-
-    margin-top: 18px;
-}
-
-
-/* ========================================
-   RPG MESAJI
-======================================== */
-
-.weather-message {
-    margin-top: 20px;
-
-    padding: 16px;
-
-    border: 1px solid #555555;
-
-    color: #ffff00;
-
-    background: #080808;
-
-    font-size: 14px;
-}
-
-
-/* ========================================
-   DETAYLAR
-======================================== */
-
-.details {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-
-    margin-top: 25px;
-}
-
-.detail-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
-
-    min-width: 0;
-
-    padding: 17px;
-
-    border: 1px solid #555555;
-
-    background: rgba(255,255,255,0.02);
-
-    transition: 0.2s;
-}
-
-.detail-card:hover {
-    border-color: #ffff00;
-
-    transform: translateY(-2px);
-}
-
-.detail-icon {
-    font-size: 25px;
-}
-
-.detail-card span {
-    display: block;
-
-    color: #777777;
-
-    font-size: 10px;
-
-    margin-bottom: 6px;
-
-    letter-spacing: 1px;
-}
-
-.detail-card strong {
-    font-size: 16px;
-
-    white-space: nowrap;
-}
-
-
-/* ========================================
-   BÖLÜM BAŞLIKLARI
-======================================== */
-
-.forecast-section {
-    margin-top: 35px;
-}
-
-.section-title {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    border-bottom: 2px solid #444444;
-
-    padding-bottom: 10px;
-
-    margin-bottom: 15px;
-}
-
-.section-title span {
-    color: #ff3333;
-
-    font-size: 18px;
-}
-
-.section-title h2 {
-    margin: 0;
-
-    font-size: 18px;
-
-    color: #ffff00;
-
-    letter-spacing: 1px;
-}
-
-
-/* ========================================
-   SAATLİK
-======================================== */
-
-.hourly-container {
-    display: flex;
-
-    gap: 10px;
-
-    overflow-x: auto;
-
-    padding: 5px 2px 15px;
-
-    scrollbar-width: thin;
-}
-
-.hourly-container::-webkit-scrollbar {
-    height: 6px;
-}
-
-.hourly-container::-webkit-scrollbar-track {
-    background: #111111;
-}
-
-.hourly-container::-webkit-scrollbar-thumb {
-    background: #555555;
-}
-
-.hour-card {
-    flex: 0 0 125px;
-
-    padding: 17px 12px;
-
-    text-align: center;
-
-    border: 1px solid #444444;
-
-    background: #080808;
-
-    transition: 0.2s;
-}
-
-.hour-card:hover {
-    border-color: #ffff00;
-
-    transform: translateY(-3px);
-}
-
-.hour-card .time {
-    color: #ffff00;
-
-    font-size: 13px;
-
-    margin-bottom: 13px;
-}
-
-.hour-card .icon {
-    font-size: 30px;
-
-    margin-bottom: 12px;
-}
-
-.hour-card .temp {
-    font-size: 19px;
-
-    font-weight: bold;
-}
-
-.hour-card .rain {
-    color: #777777;
-
-    font-size: 11px;
-
-    margin-top: 8px;
-}
-
-
-/* ========================================
-   7 GÜNLÜK
-======================================== */
-
-.daily-container {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-}
-
-.day-card {
-    display: grid;
-
-    grid-template-columns:
-        1.4fr
-        70px
-        1fr
-        1fr;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 16px 18px;
-
-    border: 1px solid #444444;
-
-    background: #080808;
-
-    transition: 0.2s;
-}
-
-.day-card:hover {
-    border-color: #ffff00;
-
-    transform: translateX(3px);
-}
-
-.day-name {
-    color: #ffff00;
-
-    font-weight: bold;
-}
-
-.day-icon {
-    font-size: 28px;
-}
-
-.day-temp {
-    font-size: 17px;
-}
-
-.day-rain {
-    color: #777777;
-
-    text-align: right;
-
-    font-size: 13px;
-}
-
-
-/* ========================================
-   GÜNEŞ
-======================================== */
-
-.sun-section {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 12px;
-
-    margin-top: 30px;
-}
-
-.sun-card {
-    border: 1px solid #444444;
-
-    padding: 22px;
-
-    text-align: center;
-
-    background: #080808;
-}
-
-.sun-card span {
-    display: block;
-
-    color: #777777;
-
-    font-size: 12px;
-
-    margin-bottom: 10px;
-}
-
-.sun-card strong {
-    color: #ffff00;
-
-    font-size: 23px;
-}
-
-
-/* ========================================
-   FOOTER
-======================================== */
-
-footer {
-    text-align: center;
-
-    padding: 35px 0;
-
-    color: #666666;
-}
-
-.footer-logo {
-    color: #ffffff;
-
-    font-weight: bold;
-
-    letter-spacing: 2px;
-}
-
-.footer-logo:first-letter {
-    color: #ff3333;
-}
-
-footer p {
-    font-size: 12px;
-
-    margin: 10px 0;
-}
-
-footer small {
-    color: #444444;
-}
-
-
-/* ========================================
-   MOBİL
-======================================== */
-
-@media (max-width: 750px) {
-
-    .game-screen {
-        width: 94%;
-
-        margin: 15px auto;
-    }
-
-    .header {
-        padding: 25px 15px;
-    }
-
-    .logo {
-        font-size: 30px;
-
-        letter-spacing: 1px;
-    }
-
-    .subtitle {
-        font-size: 10px;
-
-        letter-spacing: 2px;
-    }
-
-    .search-box {
-        flex-direction: column;
-    }
-
-    #searchButton {
-        min-height: 52px;
-    }
-
-    .weather-card {
-        padding: 20px;
-    }
-
-    .weather-header h1 {
-        font-size: 28px;
-    }
-
-    .weather-icon {
-        font-size: 55px;
-    }
-
-    .temperature {
-        font-size: 65px;
-    }
-
-    .details {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .detail-card {
-        padding: 13px;
-    }
-
-    .day-card {
-        grid-template-columns:
-            1fr 50px 1fr;
-    }
-
-    .day-rain {
-        grid-column: 1 / -1;
-
-        text-align: left;
-    }
-
-    .sun-section {
-        grid-template-columns: 1fr;
     }
 }
 
 
-/* ========================================
-   KÜÇÜK TELEFONLAR
-======================================== */
+/* =========================================
+   ARA BUTONU
+   ========================================= */
 
-@media (max-width: 430px) {
+searchButton.addEventListener(
+    "click",
+    function() {
 
-    .details {
-        grid-template-columns: 1fr;
+        searchCity(
+            cityInput.value
+        );
+
     }
+);
 
-    .weather-header {
-        align-items: flex-start;
-    }
 
-    .weather-icon {
-        font-size: 45px;
-    }
+/* =========================================
+   ENTER
+   ========================================= */
 
-    .temperature {
-        font-size: 58px;
+cityInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            searchCity(
+                cityInput.value
+            );
+
+        }
+
     }
-}
+);
+
+
+/* =========================================
+   BAŞLANGIÇ
+   ========================================= */
+
+searchCity("Aydın");
