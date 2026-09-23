@@ -358,6 +358,293 @@ footer {
     .day-rain {
         grid-column: 1 / -1;
     }
+    /* ========================================
+   UNDERTALE EASTER EGG TEMALARI
+   ======================================== */
+
+/* SANS */
+body.theme-sans {
+    background: #050914;
+}
+
+body.theme-sans .game-screen {
+    text-shadow: 0 0 6px #4da6ff;
+}
+
+body.theme-sans header,
+body.theme-sans #weather,
+body.theme-sans .quick-cities,
+body.theme-sans .detail-card,
+body.theme-sans .hour-card,
+body.theme-sans .day-card,
+body.theme-sans .sun-section div {
+    border-color: #4da6ff;
+}
+
+body.theme-sans header h1,
+body.theme-sans .temperature,
+body.theme-sans .forecast-section h2,
+body.theme-sans .quick-cities h2,
+body.theme-sans #status,
+body.theme-sans .rpg-message,
+body.theme-sans .hour-card .time,
+body.theme-sans .day-name,
+body.theme-sans .sun-section strong {
+    color: #4da6ff;
+}
+
+body.theme-sans #cityInput,
+body.theme-sans #searchButton,
+body.theme-sans .city-button {
+    border-color: #4da6ff;
+}
+
+
+/* PAPYRUS */
+
+body.theme-papyrus {
+    background: #120900;
+}
+
+body.theme-papyrus header,
+body.theme-papyrus #weather,
+body.theme-papyrus .quick-cities,
+body.theme-papyrus .detail-card,
+body.theme-papyrus .hour-card,
+body.theme-papyrus .day-card,
+body.theme-papyrus .sun-section div {
+    border-color: #ff6b00;
+}
+
+body.theme-papyrus header h1,
+body.theme-papyrus .temperature,
+body.theme-papyrus .forecast-section h2,
+body.theme-papyrus .quick-cities h2,
+body.theme-papyrus #status,
+body.theme-papyrus .rpg-message,
+body.theme-papyrus .hour-card .time,
+body.theme-papyrus .day-name,
+body.theme-papyrus .sun-section strong {
+    color: #ff6b00;
+}
+
+
+/* UNDYNE */
+
+body.theme-undyne {
+    background: #00121c;
+}
+
+body.theme-undyne header,
+body.theme-undyne #weather,
+body.theme-undyne .quick-cities,
+body.theme-undyne .detail-card,
+body.theme-undyne .hour-card,
+body.theme-undyne .day-card,
+body.theme-undyne .sun-section div {
+    border-color: #00bfff;
+}
+
+body.theme-undyne header h1,
+body.theme-undyne .temperature,
+body.theme-undyne .forecast-section h2,
+body.theme-undyne .quick-cities h2,
+body.theme-undyne #status,
+body.theme-undyne .rpg-message,
+body.theme-undyne .hour-card .time,
+body.theme-undyne .day-name,
+body.theme-undyne .sun-section strong {
+    color: #00bfff;
+}
+
+
+/* TORIEL */
+
+body.theme-toriel {
+    background: #12051a;
+}
+
+body.theme-toriel header,
+body.theme-toriel #weather,
+body.theme-toriel .quick-cities,
+body.theme-toriel .detail-card,
+body.theme-toriel .hour-card,
+body.theme-toriel .day-card,
+body.theme-toriel .sun-section div {
+    border-color: #b86cff;
+}
+
+body.theme-toriel header h1,
+body.theme-toriel .temperature,
+body.theme-toriel .forecast-section h2,
+body.theme-toriel .quick-cities h2,
+body.theme-toriel #status,
+body.theme-toriel .rpg-message,
+body.theme-toriel .hour-card .time,
+body.theme-toriel .day-name,
+body.theme-toriel .sun-section strong {
+    color: #b86cff;
+}
+
+
+/* ASGORE */
+
+body.theme-asgore {
+    background: #160700;
+}
+
+body.theme-asgore header,
+body.theme-asgore #weather,
+body.theme-asgore .quick-cities,
+body.theme-asgore .detail-card,
+body.theme-asgore .hour-card,
+body.theme-asgore .day-card,
+body.theme-asgore .sun-section div {
+    border-color: #ff9d00;
+}
+
+body.theme-asgore header h1,
+body.theme-asgore .temperature,
+body.theme-asgore .forecast-section h2,
+body.theme-asgore .quick-cities h2,
+body.theme-asgore #status,
+body.theme-asgore .rpg-message,
+body.theme-asgore .hour-card .time,
+body.theme-asgore .day-name,
+body.theme-asgore .sun-section strong {
+    color: #ff9d00;
+}
+
+
+/* ALPHYS */
+
+body.theme-alphys {
+    background: #090014;
+}
+
+body.theme-alphys header,
+body.theme-alphys #weather,
+body.theme-alphys .quick-cities,
+body.theme-alphys .detail-card,
+body.theme-alphys .hour-card,
+body.theme-alphys .day-card,
+body.theme-alphys .sun-section div {
+    border-color: #d84cff;
+}
+
+body.theme-alphys header h1,
+body.theme-alphys .temperature,
+body.theme-alphys .forecast-section h2,
+body.theme-alphys .quick-cities h2,
+body.theme-alphys #status,
+body.theme-alphys .rpg-message,
+body.theme-alphys .hour-card .time,
+body.theme-alphys .day-name,
+body.theme-alphys .sun-section strong {
+    color: #d84cff;
+}
+
+
+/* METTATON */
+
+body.theme-mettaton {
+    background: #18000d;
+}
+
+body.theme-mettaton header,
+body.theme-mettaton #weather,
+body.theme-mettaton .quick-cities,
+body.theme-mettaton .detail-card,
+body.theme-mettaton .hour-card,
+body.theme-mettaton .day-card,
+body.theme-mettaton .sun-section div {
+    border-color: #ff3fa4;
+}
+
+body.theme-mettaton header h1,
+body.theme-mettaton .temperature,
+body.theme-mettaton .forecast-section h2,
+body.theme-mettaton .quick-cities h2,
+body.theme-mettaton #status,
+body.theme-mettaton .rpg-message,
+body.theme-mettaton .hour-card .time,
+body.theme-mettaton .day-name,
+body.theme-mettaton .sun-section strong {
+    color: #ff3fa4;
+}
+
+
+/* FLOWEY */
+
+body.theme-flowey {
+    background: #071000;
+}
+
+body.theme-flowey header,
+body.theme-flowey #weather,
+body.theme-flowey .quick-cities,
+body.theme-flowey .detail-card,
+body.theme-flowey .hour-card,
+body.theme-flowey .day-card,
+body.theme-flowey .sun-section div {
+    border-color: #7cff00;
+}
+
+body.theme-flowey header h1,
+body.theme-flowey .temperature,
+body.theme-flowey .forecast-section h2,
+body.theme-flowey .quick-cities h2,
+body.theme-flowey #status,
+body.theme-flowey .rpg-message,
+body.theme-flowey .hour-card .time,
+body.theme-flowey .day-name,
+body.theme-flowey .sun-section strong {
+    color: #7cff00;
+}
+
+
+/* GASTER */
+
+body.theme-gaster {
+    background: #000000;
+    filter: contrast(1.15);
+}
+
+body.theme-gaster .game-screen {
+    animation: gasterGlitch 0.15s infinite alternate;
+}
+
+body.theme-gaster header,
+body.theme-gaster #weather,
+body.theme-gaster .quick-cities,
+body.theme-gaster .detail-card,
+body.theme-gaster .hour-card,
+body.theme-gaster .day-card,
+body.theme-gaster .sun-section div {
+    border-color: #aaaaaa;
+}
+
+body.theme-gaster header h1,
+body.theme-gaster .temperature,
+body.theme-gaster .forecast-section h2,
+body.theme-gaster .quick-cities h2,
+body.theme-gaster #status,
+body.theme-gaster .rpg-message,
+body.theme-gaster .hour-card .time,
+body.theme-gaster .day-name,
+body.theme-gaster .sun-section strong {
+    color: #ffffff;
+}
+
+@keyframes gasterGlitch {
+    from {
+        transform: translateX(-1px);
+    }
+
+    to {
+        transform: translateX(1px);
+    }
+}
 
     .sun-section {
         grid-template-columns: 1fr;
