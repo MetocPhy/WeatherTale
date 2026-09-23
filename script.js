@@ -511,9 +511,27 @@ searchButton.addEventListener(
     "click",
     function() {
 
-        searchCity(
-            cityInput.value
-        );
+        const text = cityInput.value
+            .trim()
+            .toLowerCase();
+
+        const undertaleCharacters = [
+            "sans",
+            "papyrus",
+            "undyne",
+            "toriel",
+            "asgore",
+            "alphys",
+            "mettaton",
+            "flowey",
+            "gaster"
+        ];
+
+        if (undertaleCharacters.includes(text)) {
+            return;
+        }
+
+        searchCity(cityInput.value);
 
     }
 );
@@ -527,13 +545,31 @@ cityInput.addEventListener(
     "keydown",
     function(event) {
 
-        if (event.key === "Enter") {
+      if (event.key === "Enter") {
 
-            searchCity(
-                cityInput.value
-            );
+    const text = cityInput.value
+        .trim()
+        .toLowerCase();
 
-        }
+    const undertaleCharacters = [
+        "sans",
+        "papyrus",
+        "undyne",
+        "toriel",
+        "asgore",
+        "alphys",
+        "mettaton",
+        "flowey",
+        "gaster"
+    ];
+
+    if (undertaleCharacters.includes(text)) {
+        return;
+    }
+
+    searchCity(cityInput.value);
+
+}
 
     }
 );
